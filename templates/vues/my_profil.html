@@ -1,0 +1,69 @@
+{% extends 'layouts/base.html' %}
+{% block title %}Profil user{% endblock title %}
+
+
+{% block content %}
+    <div class="wrapper">
+        <h1 class="text-center mt-4 name">
+            Profil {{request.user.username}}
+        </h1><hr>
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    {% if message.tags == 'error' %}
+                        <div {% if message.tags %} class="alert alert-danger text-center alert-dismissible fade show" role="alert" {% endif %}>
+                            {{message}}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% else %}
+                        <div {% if message.tags %} class="alert alert-success text-center alert-dismissible fade show" role="alert" {% endif %}>
+                            {{message}}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+        <div class="" style="font-size: 18pt; font-weight: bold;">
+            <div class="row">
+                <div class="col-md-12"><h5>Nom: <span style="color: #0b1a36;">{{request.user.user_account.nom}}</span></h5></div>
+            </div>
+            <div class="row">
+                <div class="col-md-12"><h5>Post-nom: <span style="color: #0b1a36;">{{request.user.user_account.post_nom}}</span></h5></div>
+            </div>
+            <div class="row">
+                <div class="col-md-12"><h5>Prénom: <span style="color: #0b1a36;">{{request.user.user_account.pre_nom}}</span></h5></div>
+            </div>
+            <div class="row">
+                <div class="col-md-12"><h5>Sexe: <span style="color: #0b1a36;">{{request.user.user_account.genre}}</span></h5></div>
+            </div>
+            <div class="row">
+                <div class="col-md-12"><h5>Email: <span style="color: #0b1a36; text-transform: none;">{{request.user.user_account.email}}</span></h5></div>
+            </div>
+            <div class="row">
+                <div class="col-md-12"><h5>N° Phone: <span style="color: #0b1a36;">{{request.user.user_account.phone_number}}</span></h5></div>
+            </div>
+            <div class="row">
+                {% if request.user.user_account.is_admin %}
+                    <div class="col-md-4"><h5>Admin: <span class="text-success"><i class='bx bx-check-circle'></i></span></h5></div>
+                {% else %}
+                    <div class="col-md-4"><h5>Admin: <span class="text-danger"><i class='bx bx-x-circle'></i></span></h5></div>
+                {% endif %}
+            </div>
+        </div>
+        <hr>
+        <div class="btn-group dropup">
+            <a class="btn btn-primary btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Mes options
+            </a>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <a class="dropdown-item" href="{% url 'presence:password_change' %}">Mise à jour du mot de passe</a>
+                <a class="dropdown-item" href="{% url 'presence:update_username' %}">Changer le nom d'utilisateur</a>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

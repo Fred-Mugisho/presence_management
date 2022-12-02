@@ -1,0 +1,161 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block title %}Sceance{% endblock title %}
+
+
+{% block content %}
+{% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            {% if message.tags == 'error' %}
+                <div {% if message.tags %} class="alert alert-danger text-center alert-dismissible fade show" role="alert" {% endif %}>
+                    {{message}}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% else %}
+                <div {% if message.tags %} class="alert alert-success text-center alert-dismissible fade show" role="alert" {% endif %}>
+                    {{message}}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% if participants %}
+    <div class="title normal-color text-center">Scéance {{sceance.cours}} de la {{sceance.promotion}}</div>
+    <a href="#" class="btn btn-primary btn-sm mb-2" data-toggle="modal" data-target="#exampleModalCenter">Mettre à jour liste</a>
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title text-center" id="exampleModalLongTitle">Mise à jour de la liste des participants</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'presence:import_data_excel' sceance.id %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                          <label for="recipient-name" class="col-form-label">Fichier excel des participants:</label>
+                          <input type="file" required class="form-control" name="myfile">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm btn-block">Télécharger</button>
+                      </form>
+                </div>
+            </div>
+        </div>
+    </div>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">Presence</th>
+                    <th scope="col">Noms</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for participant in participants %}
+                        {% if participant.pourcentage_presence >= 75 %}
+                            <tr class="text-success">
+                                <td>{{participant.pourcentage_presence}}%</td>
+                                <td>{{participant.nom}} {{participant.post_nom}} {{participant.pre_nom}} [{{participant.matricule}}]</td>
+                                <td>
+                                    {% if participant.is_presente %}
+                                        <p><input name={{ participant.id }} type="checkbox" checked class="form-check-input present"></p>
+                                    {% else %}
+                                        <p><input name={{ participant.id }} type="checkbox" class="form-check-input present"></p>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% elif participant.pourcentage_presence >= 50 %}
+                            <tr class="text-warning">
+                                <td>{{participant.pourcentage_presence}}%</td>
+                                <td>{{participant.nom}} {{participant.post_nom}} {{participant.pre_nom}} [{{participant.matricule}}]</td>
+                                <td>
+                                    {% if participant.is_presente %}
+                                        <p><input name={{ participant.id }} type="checkbox" checked class="form-check-input present"></p>
+                                    {% else %}
+                                        <p><input name={{ participant.id }} type="checkbox" class="form-check-input present"></p>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr class="text-danger">
+                                <td>{{participant.pourcentage_presence}}%</td>
+                                <td>{{participant.nom}} {{participant.post_nom}} {{participant.pre_nom}} [{{participant.matricule}}]</td>
+                                <td>
+                                    {% if participant.is_presente %}
+                                        <p><input name={{ participant.id }} type="checkbox" checked class="form-check-input present"></p>
+                                    {% else %}
+                                        <p><input name={{ participant.id }} type="checkbox" class="form-check-input present"></p>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+            <a href="{% url 'presence:export_data_to_excel' sceance.id %}" target="_blank" class="btn btn-warning text-light btn-sm"><i class='bx bxs-file-export' ></i> Export to excel</a>
+            <a href="{% url 'presence:open_sceance' sceance.id %}" class="btn btn-primary btn-sm"><i class='bx bx-refresh'></i></a>
+        </div>
+    {% else %}
+        <br>
+        <div class="alert alert-info text-center">
+            <p>
+                Aucun participant existant pour la scéance de {{sceance.cours}} de la {{sceance.promotion}}, <a href="#" data-toggle="modal" data-target="#exampleModalCenter">Ajouter les participants en utilisant un fichier excel des étudiants de la promotion</a>
+            </p>
+        </div>
+        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title text-center" id="exampleModalLongTitle">Chargerment des participants à la scéance</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{% url 'presence:import_data_excel' sceance.id %}" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="form-group">
+                              <label for="recipient-name" class="col-form-label">Fichier excel des participants:</label>
+                              <input type="file" required class="form-control" name="myfile">
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm btn-block">Télécharger</button>
+                          </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock content %}
+
+{% block javascript %}
+<script type="text/javascript" src="{% static 'js/jquery-3.6.1.min.js' %}"></script>
+<script>
+    $('.present').click(function(){
+        
+        $.ajax({
+            type: "POST",
+            url: "{% url 'presence:open_sceance' sceance.id %}",
+            data: {'content_id': $(this).attr('name'), 'operation':'like_submit', 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+            dataType: "json",
+
+            success: function(response) {
+                if(response.present==true){
+                    console.log(1)
+                }
+                else if(response.present==false){
+                    console.log(0)
+                }
+            }
+        });
+    })
+</script>
+{% endblock javascript %}

@@ -1,0 +1,76 @@
+{% extends 'layouts/base.html' %}
+{% block title %}Home{% endblock title %}
+
+
+{% block content %}
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            {% if message.tags == 'error' %}
+                <div {% if message.tags %} class="alert alert-danger text-center alert-dismissible fade show" role="alert" {% endif %}>
+                    {{message}}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% else %}
+                <div {% if message.tags %} class="alert alert-success text-center alert-dismissible fade show" role="alert" {% endif %}>
+                    {{message}}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% if mes_sceances %}
+        <div class="table-responsive">
+            <div class="title normal-color text-center">Mes scéances</div>
+            <a href="{% url 'presence:add_sceance' %}" class="btn btn-primary btn-sm mb-2">Nouvelle scéance</a>
+            <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">Promotion</th>
+                    <th scope="col">Cours</th>
+                    <th scope="col">Nombre scéance</th>
+                    <th scope="col">Date création</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for sceance in mes_sceances %}
+                        <tr>
+                            <td>{{sceance.promotion}}</td>
+                            <td>{{sceance.cours}}</td>
+                            {% if sceance.number_seance <= 1 %}
+                                <td>{{sceance.number_seance}} scéance</td>
+                            {% else %}
+                                <td>{{sceance.number_seance}} scéances</td>
+                            {% endif %}
+                            <td>{{sceance.date_create}}</td>
+                            <td>
+                                <div class="dropdown show">
+                                    <a class="btn btn-primary btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Options
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                        <a class="dropdown-item" href="{% url 'presence:update_sceance' sceance.id %}">Mise à jour</a>
+                                        <a class="dropdown-item" href="{% url 'presence:open_sceance' sceance.id %}">Ouvrir</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <br>
+        <div class="alert alert-info text-center">
+            <p>
+                Vous n'avez aucune scéance dans le système, voulez-vous créer une ? <a href="{% url 'presence:add_sceance' %}">clic ici</a>
+            </p>
+        </div>
+    {% endif %}
+{% endblock content %}

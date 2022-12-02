@@ -1,0 +1,73 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block title %}Détails scéance{% endblock title %}
+
+
+{% block content %}
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                {% if message.tags == 'error' %}
+                    <div {% if message.tags %} class="alert alert-danger text-center alert-dismissible fade show" role="alert" {% endif %}>
+                        {{message}}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% else %}
+                    <div {% if message.tags %} class="alert alert-success text-center alert-dismissible fade show" role="alert" {% endif %}>
+                        {{message}}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% if participants %}
+        <div class="title normal-color text-center">Scéance {{sceance.cours}} de la {{sceance.promotion}}</div>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">Matricule</th>
+                    <th scope="col">Noms</th>
+                    <th scope="col">Presence</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for participant in participants %}
+                        {% if participant.pourcentage_presence >= 75 %}
+                            <tr class="text-success">
+                                <td>{{participant.matricule}}</td>
+                                <td>{{participant.nom}} {{participant.post_nom}} {{participant.pre_nom}}</td>
+                                <td>{{participant.pourcentage_presence}}%</td>
+                            </tr>
+                        {% elif participant.pourcentage_presence >= 50 %}
+                            <tr class="text-warning">
+                                <td>{{participant.matricule}}</td>
+                                <td>{{participant.nom}} {{participant.post_nom}} {{participant.pre_nom}}</td>
+                                <td>{{participant.pourcentage_presence}}%</td>
+                            </tr>
+                        {% else %}
+                            <tr class="text-danger">
+                                <td>{{participant.matricule}}</td>
+                                <td>{{participant.nom}} {{participant.post_nom}} {{participant.pre_nom}}</td>
+                                <td>{{participant.pourcentage_presence}}%</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+            <a href="{% url 'presence:export_data_to_excel' sceance.id %}" target="_blank" class="btn btn-warning text-light btn-sm"><i class='bx bxs-file-export' ></i> Export to excel</a>
+        </div>
+    {% else %}
+        <br>
+        <div class="alert alert-info text-center">
+            <p>
+                Aucun participant existant pour la scéance de {{sceance.cours}} de la {{sceance.promotion}}
+            </p>
+        </div>
+    {% endif %}
+{% endblock content %}

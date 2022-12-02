@@ -1,0 +1,123 @@
+{% extends 'layouts/base.html' %}
+{% block title %}Home{% endblock title %}
+
+
+{% block content %}
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                {% if message.tags == 'error' %}
+                    <div {% if message.tags %} class="alert alert-danger text-center alert-dismissible fade show" role="alert" {% endif %}>
+                        {{message}}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% else %}
+                    <div {% if message.tags %} class="alert alert-success text-center alert-dismissible fade show" role="alert" {% endif %}>
+                        {{message}}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% if users %}
+        <div class="title normal-color text-center">Les utilisateurs</div>
+        <a href="{% url 'presence:register_user' %}" class="btn btn-primary btn-sm mb-2">Ajouter un nouvel utilisateur</a>
+        <input type="text" id="searchtxt" placeholder="Recherche par nom ..." onkeyup="searchUser();" class="form-control"><br>
+        <div class="table-responsive">
+            <table id="searchTable" class="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">Statut</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Postnom</th>
+                    <th scope="col">Prénom</th>
+                    <th scope="col">Genre</th>
+                    <th scope="col">N° Phone</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Admin</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            {% if user.user_account.is_active %}
+                                <td class="text-success"><i class='bx bx-check-circle'></i></td>
+                            {% else %}
+                                <td class="text-danger"><i class='bx bx-x-circle'></i></td>
+                            {% endif %}
+                            <td>{{user.nom}}</td>
+                            <td>{{user.post_nom}}</td>
+                            <td>{{user.pre_nom}}</td>
+                            <td>{{user.genre}}</td>
+                            <td>{{user.phone_number}}</td>
+                            <td>{{user.email}}</td>
+                            {% if user.is_admin %}
+                                <td class="text-success"><i class='bx bx-check-circle'></i></td>
+                            {% else %}
+                                <td class="text-danger"><i class='bx bx-x-circle'></i></td>
+                            {% endif %}
+                            <td>
+                                <div class="dropdown show">
+                                    <a class="btn btn-primary btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Options
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                        <a class="dropdown-item" href="{% url 'presence:update_user' user.id %}">Mise à jour</a>
+                                        {% if user.user_account.is_active %}
+                                            <a class="dropdown-item" href="{% url 'presence:bloque_user' user.id %}">Bloquer</a>
+                                        {% else %}
+                                            <a class="dropdown-item" href="{% url 'presence:bloque_user' user.id %}">Debloquer</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <br>
+        <div class="alert alert-info text-center">
+            <p>
+                Il n'y a aucun utilisateur dans le système, voulez-vous créer un ? <a href="{% url 'presence:register_user' %}">clic ici</a>
+            </p>
+        </div>
+    {% endif %}
+{% endblock content %}
+
+{% block javascript %}
+    <script type="text/javascript">
+    function searchUser()
+    {
+        var input, table, tr, td, i, filter, txtdata;
+        input = document.getElementById("searchtxt");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("searchTable");
+        tr = table.getElementsByTagName("tr");
+        for(i=0;i<tr.length;i++)
+        {
+            td = tr[i].getElementsByTagName("td")[1];
+            if(td)
+            {
+                txtdata = td.innerText;
+                if(txtdata.toUpperCase().indexOf(filter) > -1)
+                {
+                    tr[i].style.display="";
+                }
+                else
+                {
+                    tr[i].style.display="none";
+                }
+
+            }
+        }
+    }
+    </script>
+{% endblock javascript %}

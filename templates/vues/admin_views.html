@@ -1,0 +1,101 @@
+{% extends 'layouts/base.html' %}
+{% block title %}Home{% endblock title %}
+
+
+{% block content %}
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            {% if message.tags == 'error' %}
+                <div {% if message.tags %} class="alert alert-danger text-center alert-dismissible fade show" role="alert" {% endif %}>
+                    {{message}}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% else %}
+                <div {% if message.tags %} class="alert alert-success text-center alert-dismissible fade show" role="alert" {% endif %}>
+                    {{message}}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% if sceances %}
+
+        <div class="table-responsive">
+            <div class="title normal-color text-center">Les scéances</div>
+            <input type="text" id="searchtxt" placeholder="Recherche par enseignant ..." onkeyup="searchSeance();" class="form-control"><br>
+            <table id="searchTable" class="table table-striped">
+                <thead>
+                  <tr>
+                      <th scope="col">Promotion</th>
+                      <th scope="col">Cours</th>
+                      <th scope="col">Nombre scéance</th>
+                      <th scope="col">Date création</th>
+                      <th scope="col">Enseignant</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for sceance in sceances %}
+                        <tr>
+                            <td>{{sceance.promotion}}</td>
+                            <td>{{sceance.cours}}</td>
+                            {% if sceance.number_seance <= 1 %}
+                                <td>{{sceance.number_seance}} scéance</td>
+                            {% else %}
+                                <td>{{sceance.number_seance}} scéances</td>
+                            {% endif %}
+                            <td>{{sceance.date_create}}</td>
+                            <td>{{sceance.enseignant}}</td>
+                            <td>
+                                <a class="btn btn-primary btn-sm" href="{% url 'presence:detail_sceance' sceance.id %}">Détails</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <br>
+        <div class="alert alert-info text-center">
+            <p>
+                Aucune scéance existante dans le système
+            </p>
+        </div>
+    {% endif %}
+{% endblock content %}
+
+{% block javascript %}
+    <script type="text/javascript">
+    function searchSeance()
+    {
+        var input, table, tr, td, i, filter, txtdata;
+        input = document.getElementById("searchtxt");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("searchTable");
+        tr = table.getElementsByTagName("tr");
+        for(i=0;i<tr.length;i++)
+        {
+            td = tr[i].getElementsByTagName("td")[4];
+            if(td)
+            {
+                txtdata = td.innerText;
+                if(txtdata.toUpperCase().indexOf(filter) > -1)
+                {
+                    tr[i].style.display="";
+                }
+                else
+                {
+                    tr[i].style.display="none";
+                }
+
+            }
+        }
+    }
+    </script>
+{% endblock javascript %}

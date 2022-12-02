@@ -1,0 +1,49 @@
+{% url 'presence:index' as home %}
+{% url 'presence:admin_views' as admin_views %}
+{% url 'presence:utilisateurs_liste' as utilisateurs_liste %}
+{% url 'presence:my_profil' as my_profil %}
+
+{% if request.user.is_authenticated %}
+    <div class="sidebar">
+        <div class="logo-details">
+            <i class='bx bx-cart-alt'></i>
+            <span class="logo_name">JL APP</span>
+        </div>
+        <ul class="nav-links">
+            <li>
+                <a href="{% url 'presence:index' %}" class="{% if request.path == home %} active {% endif %}">
+                    <i class='bx bx-grid-alt' ></i>
+                    <span class="links_name">Accueil</span>
+                </a>
+            </li>
+            <!-- Pour les admin -->
+            {% if request.user.user_account.is_admin %}
+                <li>
+                    <a href="{% url 'presence:admin_views' %}" class="{% if request.path == admin_views %} active {% endif %}">
+                        <i class='bx bx-list-ul'></i>
+                        <span class="links_name">Toutes listes</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'presence:utilisateurs_liste' %}" class="{% if request.path == utilisateurs_liste %} active {% endif %}">
+                        <i class='bx bxs-file-archive'></i>
+                        <span class="links_name">Enseignants</span>
+                    </a>
+                </li>
+            {% endif %}
+            <!-- End Pour les admin -->
+            <li>
+                <a href="{% url 'presence:my_profil' %}" class="{% if request.path == my_profil %} active {% endif %}">
+                    <i class='bx bx-user-circle'></i>
+                    <span class="links_name">Mon profil</span>
+                </a>
+            </li>
+            <li class="log_out">
+                <a href="{% url 'presence:logout' %}">
+                    <i class='bx bx-log-out'></i>
+                    <span class="links_name">Déconnexion</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+{% endif %}

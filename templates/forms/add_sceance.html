@@ -1,0 +1,36 @@
+{% extends 'layouts/base.html' %}
+{% block title %}Add new scéance{% endblock title %}
+
+
+{% block content %}
+    <div class="wrapper">
+        <h1 class="text-center mt-4 name">
+            Création d'une nouvelle scéance
+        </h1>
+        <form action="" method="post" enctype="multipart/form-data" class="p-3 mt-3">
+            {% if sceance_form.non_field_errors %}
+                {% for error in sceance_form.non_field_errors %}
+                    <div class="alert alert-danger text-center" style="margin:12px">
+                        <strong>{{error}}</strong>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% csrf_token %}
+            {% for field in sceance_form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.help.text %}
+                        <p class="help">{{ field.help.text }}</p>
+                    {% endif %}
+                    {% if field.errors %}
+                        {% for error in field.errors %}
+                            <p class="alert alert-danger"><strong> {{ error }} </strong></p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary btn-sm btn-block">Valider</button>
+        </form>
+    </div>
+{% endblock content %}
