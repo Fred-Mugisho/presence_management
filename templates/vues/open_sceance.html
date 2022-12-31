@@ -144,7 +144,7 @@
         $.ajax({
             type: "POST",
             url: "{% url 'presence:open_sceance' sceance.id %}",
-            data: {'content_id': $(this).attr('name'), 'operation':'like_submit', 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+            data: {'content_id': $(this).attr('name'), 'operation': 'like_submit', 'csrfmiddlewaretoken': '{{ csrf_token }}'},
             dataType: "json",
 
             success: function(response) {

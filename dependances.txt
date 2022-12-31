@@ -1,0 +1,4 @@
+Django==4.0.3
+django-weasyprint==2.1.0
+openpyxl==3.0.10
+weasyprint==54.3
