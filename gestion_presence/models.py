@@ -32,9 +32,7 @@ class Sceance(models.Model):
     
     def number_seance(self):
         number_seance = SceanceDay.objects.filter(sceance=self).count()
-        if number_seance <= 0:
-            return 1
-        return number_seance
+        return 1 if number_seance <= 0 else number_seance
     
 class SceanceDay(models.Model):
     sceance = models.ForeignKey(Sceance, on_delete=models.CASCADE)
@@ -65,8 +63,6 @@ class Participant(models.Model):
         sceance = SceanceDay.objects.filter(sceance=self.sceance)
         try:
             sceance_day = sceance.get(date_sceance=date.today())
-            if self.presences.filter(id=sceance_day.id):
-                return True
-            return False
+            return bool(self.presences.filter(id=sceance_day.id))
         except Exception as e:
             return False

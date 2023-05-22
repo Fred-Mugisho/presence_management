@@ -351,18 +351,15 @@ def import_data_excel(request, id):
                 post_nom = data[2]
                 pre_nom = data[3]
                 genre = data[4]
-                
+
                 # Test existance
                 participant_is_exist = Participant.objects.filter(sceance=sceance).filter(matricule=mat)
                 if participant_is_exist.exists():
-                    print(True)
                     participant = participant_is_exist.latest('id')
-                    print(participant)
                     participant.nom = nom
                     participant.post_nom = post_nom
                     participant.pre_nom = pre_nom
                     participant.genre = genre
-                    participant.save()
                 else:
                     participant = Participant.objects.create(
                         matricule = mat,
@@ -371,14 +368,11 @@ def import_data_excel(request, id):
                         pre_nom = pre_nom,
                         genre = genre,
                         sceance=sceance,
-                        )
-                    participant.save()
-                    print(False)
-                    
-            
+                    )
+                participant.save()
             messages.success(request, f"Le chargement des participants s'est effectuée avec succès")
             return redirect('presence:open_sceance', sceance.id)
-        
+
         messages.error(request, f"La methode que vous voulez utiliser n'est pas post")
         return redirect('presence:open_sceance')
     except Exception as e:
